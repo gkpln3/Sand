@@ -7,7 +7,7 @@ It allows you to write cleaner, shorter and more configurable dockerfiles.
 
 ```python
 # Sandfile
-image("my_app", from="ubuntu", tag="20.04")
+image("my_app", from_image="ubuntu", tag="20.04")
 run("apt-get update")
 run("apt-get install ffmpeg python3")
 
