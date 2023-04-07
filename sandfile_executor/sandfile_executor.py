@@ -15,10 +15,17 @@ class SandfileExecutor:
             "entrypoint": self._entrypoint,
             "config": type("Config", (object,), {"DEBUG": False}),
             "run_config": type("RunConfig", (object,), {"ports": "", "volumes": ""}),
+            "sand": self._sand,
             # "__builtins__": self.__builtins__
         }
         __builtins__.update(self.env)
         self._commands: list[Command] = []
+
+    def _sand(self, path: str):
+        docker_image = self.execute(f"{path}/Sandfile")
+        if docker_image:
+            docker_image.save(f"{path}/Dockerfile")
+        self._commands = []
 
     def _image(self, name, from_image, tag):
         self._commands.append(FromCommand(from_image, tag))
@@ -59,8 +66,10 @@ class SandfileExecutor:
         for command in self._commands:
             dockerfile += command.serialize() + "\n"
 
-        if not isinstance(self._commands[0], FromCommand):
+        if len(self._commands) > 0 and not isinstance(self._commands[0], FromCommand):
             raise Exception("Sandfile must start with an image command")
+        elif len(self._commands) == 0:
+            return
 
         from_command = self._commands[0]
         return DockerImage(from_command.image, dockerfile)

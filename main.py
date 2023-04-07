@@ -18,7 +18,8 @@ if __name__ == "__main__":
     if args.command == "build":
         image = sand.execute_sandfile(os.path.abspath(args.dir) + "/" + "Sandfile")
         print("Building image...")
-        image.save("Dockerfile")
+        if image:
+            image.save("Dockerfile")
         print("Image built successfully!")
     # elif args.command == "run":
     #     print(f'Running container "{image_name}"')
