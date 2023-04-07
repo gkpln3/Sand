@@ -1,7 +1,7 @@
 
 from io import BytesIO
 import docker
-from sandfile_executor import SandfileExecutor
+from sandfile_executor.sandfile_executor import SandfileExecutor
 
 class Sand:
     def __init__(self):
