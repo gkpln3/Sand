@@ -32,3 +32,21 @@ Image "my_app" built!
 $ sand run
 Running container "my_app"
 ```
+
+```bash
+$ sand config build
+# Builds the dockerfile and outputs it to stdout
+```
+
+```bash
+$ sand config run
+# Builds a `docker run` command and outputs it to stdout
+```
+
+```bash
+$ sand config run --set DEBUG=True
+```
+
+```bash
+$ sand config run --values sand.yaml
+```
