@@ -1,13 +1,11 @@
 import argparse
 from sand import Sand
-from docker_image import DockerImage
 import os
 
-
-if __name__ == "__main__":
+def main():
     # Parse command-line arguments
     parser = argparse.ArgumentParser()
-    subprasers = parser.add_subparsers(dest="command")
+    subprasers = parser.add_subparsers(dest="command", required=True)
     build_parser = subprasers.add_parser("build", help="Build the image")
     build_parser.add_argument("dir", type=str, nargs='?', help="Directory to build from", default=".")
     args = parser.parse_args()
@@ -23,3 +21,6 @@ if __name__ == "__main__":
         print("Image built successfully!")
     # elif args.command == "run":
     #     print(f'Running container "{image_name}"')
+
+if __name__ == "__main__":
+    main()
