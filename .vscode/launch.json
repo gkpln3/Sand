@@ -8,10 +8,10 @@
             "name": "Python: Current File",
             "type": "python",
             "request": "launch",
-            "program": "${workspaceFolder}/sand/main.py",
+            "program": "${workspaceFolder}/sand.py",
             "console": "integratedTerminal",
             "cwd": "${workspaceFolder}/examples",
-            "args": ["build"],
+            "args": ["config"],
             "justMyCode": true
         }
     ]
