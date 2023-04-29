@@ -6,7 +6,7 @@ setup(
     packages=find_packages(),
     entry_points={
         'console_scripts': [
-            'sand = sand.main:main'
+            'sand = sand.internal.main:main'
         ]
     },
     install_requires=[
