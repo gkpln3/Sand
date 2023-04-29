@@ -6,59 +6,38 @@ import traceback
 import re
 
 _current_executor = None
-def _sand(path: str):
-    subsand = SandfileExecutor(_current_executor.env.copy())
-    _current_executor._images.extend(subsand.execute(f"{path}/Sandfile"))
-
-def _run(command: str | list[str]):
-    if isinstance(command, list):
-        for cmd in command:
-            _current_executor._commands.append(RunCommand(cmd))
-    elif isinstance(command, str):
-        _current_executor._commands.append(RunCommand(command))
-    else:
-        raise Exception("Invalid type in run command")
-
-def _copy(*args, **kwargs):
-    _current_executor._commands.append(CopyCommand(*args, **kwargs))
-
-def _entrypoint(*args, **kwargs):
-    _current_executor._commands.append(EntrypointCommand(*args, **kwargs))
-
-def _from(*args, **kwargs):
-    _current_executor._commands.append(FromCommand(*args, **kwargs))
 
 class SandfileExecutor:
-    def __init__(self, env: dict = {}):
+    def __init__(self, path, env: dict = {}):
         # Create environment for executing Sandfile
         self.env = env
-        self.env.update({
-            "Run": _run,
-            "Copy": _copy,
-            "Entrypoint": _entrypoint,
-            "Sand": _sand,
-            "From": _from,
-            # "config": type("Config", (object,), {"DEBUG": False}),
-            # "run_config": type("RunConfig", (object,), {"ports": "", "volumes": ""}),
-        })
+        self.path = path
         
         # __builtins__.update(self.env)
         self._commands: list[Command] = []
         self._images: list[DockerImage] = []
 
-    def execute(self, sandfile_path) -> str:
+    def execute(self) -> str:
         global _current_executor
         
         # Read Sandfile from disk
-        with open(sandfile_path, "r") as f:
+        with open(self.path, "r") as f:
             sandfile_contents = f.read()
         try:
             # Save the current executor
             prev_executor = _current_executor
             _current_executor = self
+            print("just set _current_executor to", hex(id(_current_executor)), "from", hex(id(prev_executor)))
+
+            # from ..sand import _commands
+            # self.env.update(_commands)
 
             # Execute Sandfile
-            exec(sandfile_contents, self.env)
+            try:
+                exec(sandfile_contents, self.env)
+            except Exception as e:
+                self.print_sandfile_exception()
+                sys.exit(1)
 
             # Restore the previous executor
             _current_executor = prev_executor
@@ -78,6 +57,15 @@ class SandfileExecutor:
             return self._images
 
         from_command = self._commands[0]
-        dockerfile_path = f"{os.path.dirname(sandfile_path)}/Dockerfile"
+        dockerfile_path = f"{os.path.dirname(self.path)}/Dockerfile"
         self._images.append(DockerImage(from_command.image, dockerfile_path, dockerfile))
         return self._images
+
+    def print_sandfile_exception(self):
+        print(f"Error while executing Sandfile")
+        tb = sys.exc_info()[2].tb_next
+        print(f'  File "{self.path}", line {tb.tb_lineno} in {tb.tb_frame.f_code.co_name}')
+        tb = tb.tb_next
+        while tb:
+            print(f'  line {tb.tb_lineno} in {tb.tb_frame.f_code.co_name}')
+            tb = tb.tb_next
