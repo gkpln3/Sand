@@ -1,5 +1,6 @@
 import os
 import sys
+from typing import List
 from .commands import *
 from ..docker_image import DockerImage
 import traceback
@@ -17,7 +18,7 @@ class SandfileExecutor:
         self._commands: list[Command] = []
         self._images: list[DockerImage] = []
 
-    def execute(self) -> str:
+    def execute(self) -> List[DockerImage]:
         global _current_executor
         
         # Read Sandfile from disk
@@ -27,7 +28,6 @@ class SandfileExecutor:
             # Save the current executor
             prev_executor = _current_executor
             _current_executor = self
-            print("just set _current_executor to", hex(id(_current_executor)), "from", hex(id(prev_executor)))
 
             # from ..sand import _commands
             # self.env.update(_commands)
