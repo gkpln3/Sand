@@ -1,2 +1,2 @@
-from sand import main
+from sand.internal import main
 main.main()

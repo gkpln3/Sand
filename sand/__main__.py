@@ -3,17 +3,9 @@ from .internal.sandfile_executor.commands import *
 from .internal.sandfile_executor.sandfile_executor import SandfileExecutor
 import os.path
     
-def _assert_running_through_sand():
-    if e._current_executor is None:
-        raise Exception("Do not run this manually, use the `sand config` command to run Sandfile.")
-    
-def _SandAPI(f):
-    def wrapper(*args, **kwargs):
-        _assert_running_through_sand()
-        return f(*args, **kwargs)
-    return wrapper
+if e._current_executor is None:
+    raise Exception("Do not run this manually, use the `sand config` command to run Sandfile.")
 
-@_SandAPI
 def Sand(relative_path: str):
     # Determine absolute path to Sandfile
     abs_path = os.path.join(os.path.dirname(e._current_executor.path), relative_path, "Sandfile")
@@ -25,7 +17,6 @@ def Sand(relative_path: str):
     # Add resulting images to current executor
     e._current_executor._images.extend(new_image)
 
-@_SandAPI
 def Run(command: str | list[str]):
     # If command is a list, add each command to the list of commands
     if isinstance(command, list):
@@ -37,15 +28,12 @@ def Run(command: str | list[str]):
     else:
         raise Exception("Invalid type in run command")
 
-@_SandAPI
 def Copy(*args, **kwargs):
     e._current_executor._commands.append(CopyCommand(*args, **kwargs))
 
-@_SandAPI
 def Entrypoint(*args, **kwargs):
     e._current_executor._commands.append(EntrypointCommand(*args, **kwargs))
 
-@_SandAPI
 def From(*args, **kwargs):
     e._current_executor._commands.append(FromCommand(*args, **kwargs))
 
