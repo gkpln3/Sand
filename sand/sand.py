@@ -38,16 +38,16 @@ def Run(command: str | list[str]):
         raise Exception("Invalid type in run command")
 
 @_SandAPI
-def Copy(*args, **kwargs):
-    e._current_executor._commands.append(CopyCommand(*args, **kwargs))
+def Copy(Src, Dst, From = None):
+    e._current_executor._commands.append(CopyCommand(Src, Dst, From=From))
 
 @_SandAPI
-def Entrypoint(*args, **kwargs):
-    e._current_executor._commands.append(EntrypointCommand(*args, **kwargs))
+def Entrypoint(Command):
+    e._current_executor._commands.append(EntrypointCommand(Command))
 
 @_SandAPI
-def From(*args, **kwargs):
-    e._current_executor._commands.append(FromCommand(*args, **kwargs))
+def From(Image, Tag=None, As=None):
+    e._current_executor._commands.append(FromCommand(Image, Tag=Tag, As=As))
 
 
 class AttributeDict(dict):
