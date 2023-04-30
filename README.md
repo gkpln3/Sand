@@ -8,7 +8,9 @@ Sand is built by developers, for developers. It's built to be as simple as possi
 
 ## Features
 ✅ Simple, easy to learn syntax based on python.
+
 ✅ Configurable Dockerfiles. 
+
 ✅ Build and run your Dockerfiles with a single command.
 
 # Example
@@ -39,7 +41,7 @@ ENTRYPOINT python3 /app/app.py
 ```
 
 ### Share Code
-Sandfiles are just Python files, and are being evaluated in an hierarchical manner by using the `Sand` directive, so you can easily share code between them.
+Because Sandfiles are just Python files, and are being evaluated in an hierarchical manner by using the `Sand` directive, so you can easily share code between them.
 ```python
 # ./Sandfile
 from sand import *
@@ -68,7 +70,7 @@ MyService("home_timeline") # Defined in ../Sandfile
 ```
 
 
-## Running
+## Usage
 Running Sand is as simple as running `sand` in your terminal.
 This will generate Dockerfiles for all Sandfiles in the current directory.
 ```bash
@@ -83,7 +85,7 @@ $ sand config -w
 Watching for changes...
 ```
 
-### Configuring
+### Configuration
 You can pass configuration values to Sand using the `-D` or `--set` flag.
 ```bash
 $ sand config -DDEBUG=True
