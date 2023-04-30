@@ -49,6 +49,16 @@ def Entrypoint(*args, **kwargs):
 def From(*args, **kwargs):
     e._current_executor._commands.append(FromCommand(*args, **kwargs))
 
+
+class AttributeDict(dict):
+    def __getattr__(self, attr):
+        if attr in self:
+            return self[attr]
+        return None
+
+    def __setattr__(self, attr, value):
+        self[attr] = value
+
 # _commands = {
 #     "Run": Run,
 #     "Copy": Copy,
@@ -58,3 +68,5 @@ def From(*args, **kwargs):
 #     # "config": type("Config", (object,), {"DEBUG": False}),
 #     # "run_config": type("RunConfig", (object,), {"ports": "", "volumes": ""}),
 # }
+
+config: AttributeDict
