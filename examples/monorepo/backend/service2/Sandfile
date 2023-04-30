@@ -1,0 +1,3 @@
+from sand import *
+
+Service("second_service")

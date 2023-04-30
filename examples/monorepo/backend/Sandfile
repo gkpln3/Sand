@@ -1,0 +1,4 @@
+from sand import *
+
+Sand("service1")
+Sand("service2")
