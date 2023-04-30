@@ -7,11 +7,13 @@ It allows you to write cleaner, shorter and more configurable Dockerfiles.
 Sand is built by developers, for developers. It's built to be as simple as possible, while still being super useful.
 
 ## Features
-✅ Simple, easy to learn syntax based on python.
+✅ Simple, easy to learn syntax based on Python.
 
 ✅ Configurable Dockerfiles. 
 
-✅ Build and run your Dockerfiles with a single command.
+✅ Share code between Dockerfiles.
+
+✅ Perfect for monorepos composed of multiple microservices.
 
 # Example
 Write your Dockerfile in a Python-like syntax.
