@@ -1,0 +1,4 @@
+from sand import *
+
+Service("first_service")
+Copy("backend/service1/static", "/static")

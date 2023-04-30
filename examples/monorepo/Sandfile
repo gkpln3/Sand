@@ -1,0 +1,16 @@
+from sand import *
+
+def Service(name):
+    From("ubuntu", Tag="20.04", As="builder")
+    Run([
+        f"echo python3 app/app.py > {name}.sh"
+        f"chmod +x {name}.sh"
+    ])
+
+    From("ubuntu", Tag="20.04", As="runner")
+    Run("apt-get update")
+    Run("apt-get install python3 -y")
+    Copy(From="builder", Src=f"{name}.sh", Dst=f"{name}.sh")
+    
+
+Sand("backend")
