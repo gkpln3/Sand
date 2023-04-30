@@ -10,7 +10,7 @@ setup(
         ]
     },
     install_requires=[
-        "docker"
+        "watchdog",
     ],
     author='Guy Kaplan',
     description='Sand is a Dockerfile generator',

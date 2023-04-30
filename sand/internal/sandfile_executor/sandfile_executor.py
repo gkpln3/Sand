@@ -37,7 +37,7 @@ class SandfileExecutor:
             exec(sandfile_contents, self.env)
         except Exception as e:
             self.print_sandfile_exception(e)
-            sys.exit(1)
+            raise e
 
         # Restore the previous executor
         _current_executor = prev_executor
@@ -55,7 +55,9 @@ class SandfileExecutor:
         from_command = self._commands[0]
         dockerfile_path = f"{os.path.dirname(self.path)}/Dockerfile"
         self._images.append(DockerImage(from_command.image, dockerfile_path, dockerfile))
-        return self._images
+        ret = self._images
+        self._images = []
+        return ret
 
     def print_sandfile_exception(self, e: Exception):
         print(f"Error while executing Sandfile: {e}")
