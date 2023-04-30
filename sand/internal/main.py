@@ -2,6 +2,8 @@ import argparse
 import re
 from typing import List
 
+from sand.sand import AttributeDict
+
 from .docker_image import DockerImage
 from .sandfile_executor.sandfile_executor import SandfileExecutor
 import os
@@ -29,19 +31,11 @@ except Exception as e:
 #     # Run Docker container
 #     _docker_client.containers.run(image_name)
 
-def execute_sandfile(sandfile_path) -> List[DockerImage]:
-    # Create Sandfile executor
-    executor = SandfileExecutor(sandfile_path)
-
-    # Execute Sandfile and generate Dockerfile
-    image_name = executor.execute()
-
-    # Return image name
-    return image_name
 
 def _add_config_command(subparsers):
     parser = subparsers.add_parser("config", help="config the image")
     parser.add_argument("dir", type=str, nargs='?', help="Directory to config from", default=".")
+    parser.add_argument("-D", "--set", dest="config", type=str, action="append", help="Set config variable, these variables will be accessible by using the `config` variable in the Sandfile")
     return parser
 
 def _add_ignore_command(subparsers):
@@ -64,19 +58,27 @@ def main():
     _add_clean_command(subparsers)
     args = parser.parse_args()
 
+    # Create Sandfile executor
     root_sandfile_path = os.path.abspath(args.dir) + "/" + "Sandfile"
+
+    config = _parse_config(args)
+    env = {
+        'config': AttributeDict(config)
+    }
+    executor = SandfileExecutor(root_sandfile_path, env)
+
     if args.command == "config":
-        images = execute_sandfile(root_sandfile_path)
+        images = executor.execute()
         for image in images:
             image.save()
         print("Image built successfully!")
     if args.command == "build":
-        images = execute_sandfile(root_sandfile_path)
+        images = executor.execute()
     if args.command == "ignore":
-        images = execute_sandfile(root_sandfile_path)
+        images = executor.execute()
         _add_dockerfiles_to_gitignore(images)
     if args.command == "clean":
-        images = execute_sandfile(root_sandfile_path)
+        images = executor.execute()
         _remove_dockerfiles(args, images)
         print("Cleaned successfully!")
 
@@ -114,6 +116,19 @@ def _add_dockerfiles_to_gitignore(images: List[DockerImage]):
             print(f"Creating {gitignore_path}")
             with open(gitignore_path, "w") as f:
                 f.write("Dockerfile\n")
+
+def _parse_config(args) -> dict:
+    if args.config is None:
+        return {}
+    
+    config = {}
+    for arg in args.config:
+        if "=" not in arg:
+            config[arg] = True
+        else:
+            key, value = arg.split("=")
+            config[key] = value
+    return config
 
 if __name__ == "__main__":
     main()
