@@ -1,0 +1,13 @@
+# Sandfile
+from sand import *
+
+From("ubuntu", Tag="20.04")
+Run("apt-get update")
+Run("apt-get install ffmpeg python3")
+
+# Install python debugger on debug images.
+if config.DEBUG:
+    Run("pip3 install pdb")
+
+Copy("app", "/app")
+Entrypoint("python3 /app/app.py")
