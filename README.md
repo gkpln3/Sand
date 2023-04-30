@@ -1,7 +1,15 @@
 # Sand 🏝
 Sand is a Dockerfile generator.
 
-It allows you to write cleaner, shorter and more configurable dockerfiles.
+It allows you to write cleaner, shorter and more configurable Dockerfiles.
+
+## Developers ❤️ Sand
+Sand is built by developers, for developers. It's built to be as simple as possible, while still being super useful.
+
+## Features
+✅ Simple, easy to learn syntax based on python.
+✅ Configurable Dockerfiles. 
+✅ Build and run your Dockerfiles with a single command.
 
 # Example
 
@@ -17,34 +25,6 @@ if config.DEBUG:
 
 Copy("app", "/app")
 Entrypoint("python3 /app/app.py")
-
-run_config.ports += "8080"
-run_config.volumes += "db_files:/db_files"
-```
-
-```bash
-$ sand build
-Building image "my_app"...
-Image "my_app" built!
-```
-
-```bash
-$ sand run
-Running container "my_app"
-```
-
-```bash
-$ sand config build
-# Builds the dockerfile and outputs it to stdout
-```
-
-```bash
-$ sand config run
-# Builds a `docker run` command and outputs it to stdout
-```
-
-```bash
-$ sand config run --set DEBUG=True
 ```
 
 ```bash
