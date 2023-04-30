@@ -1,41 +1,21 @@
 import argparse
+import glob
+import os
 import re
 from typing import List
 
-from sand.sand import AttributeDict
+from ..sand import AttributeDict
+from .sandfile_watcher import watch_for_sandfile_changes
 
 from .docker_image import DockerImage
 from .sandfile_executor.sandfile_executor import SandfileExecutor
-import os
-import docker
-
-# Connect to Docker daemon
-try:
-    _docker_client = docker.from_env()
-except Exception as e:
-    _docker_client = None
-
-# def build_container(dockerfile_path, image_name):
-#     # Read Dockerfile from disk
-#     with open(dockerfile_path, "r") as f:
-#         dockerfile = f.read()
-
-#     # Build Docker image
-#     return _docker_client.images.build(
-#         fileobj=BytesIO(dockerfile.encode()),
-#         custom_context=True,
-#         tag=image_name
-#     )
-
-# def run_container(image_name):
-#     # Run Docker container
-#     _docker_client.containers.run(image_name)
 
 
 def _add_config_command(subparsers):
     parser = subparsers.add_parser("config", help="config the image")
     parser.add_argument("dir", type=str, nargs='?', help="Directory to config from", default=".")
     parser.add_argument("-D", "--set", dest="config", type=str, action="append", help="Set config variable, these variables will be accessible by using the `config` variable in the Sandfile")
+    parser.add_argument("-w", "--watch", action="store_true", help="Watch for changes in the Sandfile and rebuild the Dockerfile")
     return parser
 
 def _add_ignore_command(subparsers):
@@ -61,17 +41,19 @@ def main():
     # Create Sandfile executor
     root_sandfile_path = os.path.abspath(args.dir) + "/" + "Sandfile"
 
-    config = _parse_config(args)
-    env = {
-        'config': AttributeDict(config)
-    }
-    executor = SandfileExecutor(root_sandfile_path, env)
+    def create_executor():
+        config = _parse_config(args)
+        env = {
+            'config': AttributeDict(config)
+        }
+        return SandfileExecutor(root_sandfile_path, env)
+    executor = create_executor()
 
     if args.command == "config":
-        images = executor.execute()
-        for image in images:
-            image.save()
-        print("Image built successfully!")
+        if args.watch:
+            _watch_config(create_executor)
+        else:
+            _generate_dockerfiles(executor)
     if args.command == "build":
         images = executor.execute()
     if args.command == "ignore":
@@ -81,6 +63,26 @@ def main():
         images = executor.execute()
         _remove_dockerfiles(args, images)
         print("Cleaned successfully!")
+
+
+def _watch_config(create_executor):
+    print("Watching for changes...")
+
+    def generate_dockerfiles():
+        try:
+            executor = create_executor()
+            _generate_dockerfiles(executor)
+        except Exception as e:
+            print(e)
+        print("Watching for changes...")
+    watch_for_sandfile_changes(generate_dockerfiles)
+    
+
+def _generate_dockerfiles(executor):
+    images = executor.execute()
+    for image in images:
+        image.save()
+    print("Built successfully!")
 
 def _remove_dockerfiles(args, images):
     for image in images:

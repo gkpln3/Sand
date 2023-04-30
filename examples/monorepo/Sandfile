@@ -12,5 +12,4 @@ def Service(name):
     Run("apt-get install python3 -y")
     Copy(From="builder", Src=f"{name}.sh", Dst=f"{name}.sh")
     
-
 Sand("backend")
