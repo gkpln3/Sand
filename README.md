@@ -43,9 +43,23 @@ ENTRYPOINT python3 /app/app.py
 ```
 
 ### Share Code
-Because Sandfiles are just Python files, and are being evaluated in an hierarchical manner by using the `Sand` directive, so you can easily share code between them.
+Because `Sandfile`s are just Python files, and are being evaluated in an hierarchical manner by using the `Sand` directive, so you can easily share code between them.
+
+Given the following directory structure:
+```
+my-monorepo/
+│
+├── tweet-service/
+│   └── Sandfile
+│
+├── home-timeline/
+│   └── Sandfile
+│
+└── Sandfile
+```
+You can write your `Sandfile`s like this:
 ```python
-# ./Sandfile
+# ./my-monorepo/Sandfile
 from sand import *
 
 def MyService(name):
@@ -54,42 +68,44 @@ def MyService(name):
     Copy(Src="app", Dst="/app")
     Entrypoint(f"python3 /app/{name}.py")
 
-Sand("tweet_service")
-Sand("home_timeline")
+Sand("tweet-service")
+Sand("home-timeline")
 ```
 ```python
-# ./tweet_service/Sandfile
+# ./my-monorepo/tweet-service/Sandfile
 from sand import *
 
-MyService("tweet_service") # Defined in ../Sandfile
+MyService("tweet-service") # Defined in ../Sandfile
 ```
 
 ```python
-# ./home_timeline/Sandfile
+# ./my-monorepo/home-timeline/Sandfile
 from sand import *
 
-MyService("home_timeline") # Defined in ../Sandfile
+MyService("home-timeline") # Defined in ../Sandfile
 ```
+
+This allows you to share code between your Dockerfiles, and keep them [DRY](https://en.wikipedia.org/wiki/Don%27t_repeat_yourself).
 
 
 ## Usage
 Running Sand is as simple as running `sand` in your terminal.
 This will generate Dockerfiles for all Sandfiles in the current directory.
-```bash
+```
 $ sand config
 Saving Dockerfile to backend/service1/Dockerfile
 Saving Dockerfile to backend/service2/Dockerfile
 Built successfully!
 ```
 You can also watch for changes and automatically rebuild your Dockerfiles.
-```bash
+```
 $ sand config -w
 Watching for changes...
 ```
 
 ### Configuration
 You can pass configuration values to Sand using the `-D` or `--set` flag.
-```bash
+```
 $ sand config -DDEBUG=True
 ```
 Or use a YAML file. (not implemented yet)
@@ -97,7 +113,7 @@ Or use a YAML file. (not implemented yet)
 # sand.yaml
 DEBUG: True
 ```
-```bash
+```
 $ sand config --values sand.yaml
 ```
 
