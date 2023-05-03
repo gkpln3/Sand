@@ -15,6 +15,16 @@ Sand is built by developers, for developers. It's built to be as simple as possi
 
 ✅ Perfect for monorepos composed of multiple microservices.
 
+✅ Supports multi-stage builds.
+
+
+#### Planned Features:
+    
+🔘 Optimize builds by finding common layers between Dockerfiles, and merging them into a base image.
+
+🔘 Minimizing the number of layers by combining multiple RUN commands into one.    
+
+
 # Example
 Write your Dockerfile in a Python-like syntax.
 ```python
@@ -22,8 +32,10 @@ Write your Dockerfile in a Python-like syntax.
 from sand import *
 
 From("ubuntu", Tag="20.04")
-Run("apt-get update")
-Run("apt-get install ffmpeg python3")
+Run([
+    "apt-get update",
+    "apt-get install ffmpeg python3"
+])
 
 # Install python debugger on debug images.
 if config.DEBUG:
@@ -40,6 +52,12 @@ RUN apt-get update
 RUN apt-get install ffmpeg python3
 COPY app /app
 ENTRYPOINT python3 /app/app.py
+```
+
+## Installation
+You can install Sand using pip.
+```bash
+pip3 install sand
 ```
 
 ### Share Code
@@ -64,7 +82,7 @@ from sand import *
 
 def MyService(name):
     From("ubuntu", "20.04")
-    Run(f"apt-get install python3")
+    Run("apt-get install python3")
     Copy(Src="app", Dst="/app")
     Entrypoint(f"python3 /app/{name}.py")
 
