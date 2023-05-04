@@ -56,12 +56,6 @@ COPY app /app
 ENTRYPOINT python3 /app/app.py
 ```
 
-## Installation
-You can install Sand using pip.
-```bash
-pip3 install sand
-```
-
 ### Share Code
 Because `Sandfile`s are just Python files, and are being evaluated in an hierarchical manner by using the `Sand` directive, so you can easily share code between them.
 
@@ -107,6 +101,11 @@ MyService("home-timeline") # Defined in ../Sandfile
 
 This allows you to share code between your Dockerfiles, and keep them [DRY](https://en.wikipedia.org/wiki/Don%27t_repeat_yourself).
 
+## Installation
+You can install Sand using pip.
+```bash
+pip3 install sand
+```
 
 ## Usage
 Running Sand is as simple as running `sand` in your terminal.
