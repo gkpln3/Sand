@@ -1,7 +1,0 @@
-from sand import *
-
-From("python")
-Copy("requirements.txt", "requirements.txt")
-Run("pip install -r requirements.txt")
-Copy("sand", "/app/sand")
-Entrypoint("python /app/sand/main.py")

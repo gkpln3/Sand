@@ -3,6 +3,7 @@ import glob
 import os
 import re
 from typing import List
+import yaml
 
 from ..sand import AttributeDict
 from .sandfile_watcher import watch_for_sandfile_changes
@@ -16,6 +17,7 @@ def _add_config_command(subparsers):
     parser.add_argument("dir", type=str, nargs='?', help="Directory to config from", default=".")
     parser.add_argument("-D", "--set", dest="config", type=str, action="append", help="Set config variable, these variables will be accessible by using the `config` variable in the Sandfile")
     parser.add_argument("-w", "--watch", action="store_true", help="Watch for changes in the Sandfile and rebuild the Dockerfile")
+    parser.add_argument("--values", type=str, nargs='?', help="Path to values file")
     return parser
 
 def _add_ignore_command(subparsers):
@@ -120,10 +122,16 @@ def _add_dockerfiles_to_gitignore(images: List[DockerImage]):
                 f.write("Dockerfile\n")
 
 def _parse_config(args) -> dict:
-    if args.config is None:
-        return {}
-    
     config = {}
+
+    if args.values is not None:
+        with open(args.values, "r") as f:
+            config = yaml.load(f, Loader=yaml.SafeLoader)
+        return config
+    
+    if args.config is None:
+        return config
+    
     for arg in args.config:
         if "=" not in arg:
             config[arg] = True

@@ -1,4 +1,6 @@
 # Sand 🏝
+[![.github/workflows/ci.yml](https://github.com/gkpln3/Sand/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/gkpln3/Sand/actions/workflows/ci.yml)
+
 Sand is a Dockerfile generator.
 
 It allows you to write cleaner, shorter and more configurable Dockerfiles.
@@ -126,7 +128,7 @@ You can pass configuration values to Sand using the `-D` or `--set` flag.
 ```
 $ sand config -DDEBUG=True
 ```
-Or use a YAML file. (not implemented yet)
+Or use a YAML file.
 ```yaml
 # sand.yaml
 DEBUG: True
