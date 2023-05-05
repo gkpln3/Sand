@@ -104,7 +104,7 @@ This allows you to share code between your Dockerfiles, and keep them [DRY](http
 ## Installation
 You can install Sand using pip.
 ```bash
-pip3 install sand
+pip3 install docker-sand
 ```
 
 ## Usage
