@@ -5,9 +5,14 @@ from pathlib import Path
 this_directory = Path(__file__).parent
 long_description = (this_directory / "README.md").read_text()
 
+def get_git_tag():
+    import subprocess
+    tag = subprocess.check_output(["git", "describe", "--tags"]).decode("utf-8").strip()
+    return tag
+
 setup(
     name='docker-sand',
-    version='0.0.3',
+    version=get_git_tag(),
     packages=find_packages(),
     entry_points={
         'console_scripts': [
