@@ -1,3 +1,4 @@
+import os
 from setuptools import setup, find_packages
 
 # read the contents of your README file
@@ -10,9 +11,23 @@ def get_git_tag():
     tag = subprocess.check_output(["git", "describe", "--tags"]).decode("utf-8").strip()
     return tag
 
+def get_version():
+    try:
+        version = get_git_tag()
+        with open("VERSION", "w") as f:
+            f.write(version)
+        return version
+    except:
+        # Not a git repo
+        pass
+
+    with open("VERSION", "r") as f:
+        version = f.read()
+    return version
+
 setup(
     name='docker-sand',
-    version=get_git_tag(),
+    version=get_version(),
     packages=find_packages(),
     entry_points={
         'console_scripts': [
