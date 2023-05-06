@@ -64,9 +64,13 @@ Given the following directory structure:
 my-monorepo/
 │
 ├── tweet-service/
+|   ├── src/
+|   ├── ...
 │   └── Sandfile
 │
 ├── home-timeline/
+|   ├── src/
+|   ├── ...
 │   └── Sandfile
 │
 └── Sandfile
@@ -79,7 +83,7 @@ from sand import *
 def MyService(name):
     From("ubuntu", "20.04")
     Run("apt-get install python3")
-    Copy(Src="app", Dst="/app")
+    Copy(Src="src", Dst="/app")
     Entrypoint(f"python3 /app/{name}.py")
 
 Sand("tweet-service")
@@ -100,6 +104,8 @@ MyService("home-timeline") # Defined in ../Sandfile
 ```
 
 This allows you to share code between your Dockerfiles, and keep them [DRY](https://en.wikipedia.org/wiki/Don%27t_repeat_yourself).
+
+This works similar to the way `add_subdirectory` works in [CMake](https://cmake.org/)
 
 ## Installation
 You can install Sand using pip.
