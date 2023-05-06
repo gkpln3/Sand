@@ -8,6 +8,12 @@ It allows you to write cleaner, shorter and more configurable Dockerfiles.
 ## Developers ❤️ Sand
 Sand is built by developers, for developers. It's built to be as simple as possible, while still being super useful.
 
+## Installation
+You can install Sand using pip.
+```bash
+pip3 install docker-sand
+```
+
 ## Features
 ✅ Simple, easy to learn syntax based on Python.
 
@@ -100,12 +106,6 @@ MyService("home-timeline") # Defined in ../Sandfile
 ```
 
 This allows you to share code between your Dockerfiles, and keep them [DRY](https://en.wikipedia.org/wiki/Don%27t_repeat_yourself).
-
-## Installation
-You can install Sand using pip.
-```bash
-pip3 install docker-sand
-```
 
 ## Usage
 Running Sand is as simple as running `sand` in your terminal.
