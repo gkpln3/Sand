@@ -20,11 +20,17 @@ class FromCommand(Command):
         return ret
 
 class RunCommand(Command):
-    def __init__(self, Command):
+    def __init__(self, Command, Mounts=None):
         self.command = Command
+        self.mounts = Mounts
 
     def serialize(self):
-        return f"RUN {self.command}"
+        cmd = f"RUN "
+        if self.mounts is not None:
+            for mount in self.mounts:
+                cmd += f"--mount={mount} "
+        cmd += self.command
+        return cmd
 
 class CopyCommand(Command):
     def __init__(self, Src, Dst, From = None):
@@ -44,6 +50,14 @@ class EntrypointCommand(Command):
 
     def serialize(self):
         return f"ENTRYPOINT {self.command}"
+    
+class EnvCommand(Command):
+    def __init__(self, Name, Value):
+        self.name = Name
+        self.value = Value
+
+    def serialize(self):
+        return f'ENV {self.name}="{self.value}"'
 
 class ExposeCommand(Command):
     def __init__(self, Ports):

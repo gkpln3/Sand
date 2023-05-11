@@ -26,14 +26,17 @@ def Sand(relative_path: str):
     e._current_executor._images.extend(new_image)
 
 @_SandAPI
-def Run(command: str | list[str]):
+def Run(Command: str | list[str], Mount: str | list[str] = None):
+    if isinstance(Mount, str):
+        Mount = [Mount]
+
     # If command is a list, add each command to the list of commands
-    if isinstance(command, list):
-        for cmd in command:
-            e._current_executor._commands.append(RunCommand(cmd))
+    if isinstance(Command, list):
+        for cmd in Command:
+            e._current_executor._commands.append(RunCommand(cmd, Mounts=Mount))
     # If command is a string, add it to the list of commands
-    elif isinstance(command, str):
-        e._current_executor._commands.append(RunCommand(command))
+    elif isinstance(Command, str):
+        e._current_executor._commands.append(RunCommand(Command, Mounts=Mount))
     else:
         raise Exception("Invalid type in run command")
 
@@ -47,7 +50,21 @@ def Entrypoint(Command):
 
 @_SandAPI
 def From(Image, Tag=None, As=None):
+    if ":" in Image:
+        if Tag is not None:
+            raise Exception("Cannot specify tag twice")
+        Image, Tag = Image.split(":")
     e._current_executor._commands.append(FromCommand(Image, Tag=Tag, As=As))
+
+@_SandAPI
+def Env(Name, Value=None):
+    if "=" in Name:
+        if Value is not None:
+            raise Exception("Cannot specify value twice")
+        Name, Value = Name.split("=")
+    elif Value is None:
+        raise Exception("Must specify value")
+    e._current_executor._commands.append(EnvCommand(Name, Value))
 
 
 class AttributeDict(dict):
