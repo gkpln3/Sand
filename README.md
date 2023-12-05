@@ -63,7 +63,7 @@ ENTRYPOINT python3 /app/app.py
 ```
 
 ### Share Code
-Because `Sandfile`s are just Python files, and are being evaluated in an hierarchical manner by using the `Sand` directive, so you can easily share code between them.
+Because `Sandfile`s are just Python files, and are being evaluated in an hierarchical manner by using the `Sand` directive, you can easily share code between them.
 
 Given the following directory structure:
 ```
